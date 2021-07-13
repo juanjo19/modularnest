@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
@@ -10,6 +11,15 @@ async function bootstrap() {
       forbidNonWhitelisted: true,
     }),
   );
-  await app.listen(3000);
+  const config = new DocumentBuilder()
+    .setTitle('API')
+    .setDescription('Platzi Store')
+    .setVersion('1.0')
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document);
+  //habilitar los cors para que hagan peticiones de cualquier parte
+  app.enableCors();
+  await app.listen(process.env.PORT || 3000);
 }
 bootstrap();
